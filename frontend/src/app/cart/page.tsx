@@ -1,5 +1,5 @@
 "use client";
-
+import { useEffect } from 'react';
 
 import { useCart } from "@/context/CartContext";
 import Navbar from "@/components/layout/Navbar";
