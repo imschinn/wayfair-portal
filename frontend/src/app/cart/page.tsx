@@ -10,12 +10,18 @@ import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { Package } from "lucide-react";
 
 export default function CartPage() {
   const { isLoggedIn } = useAuth();
   const router = useRouter();
-  useEffect(() => { if (!isLoggedIn) router.replace("/login"); }, [isLoggedIn, router]);
+  
+  useEffect(() => { 
+    if (!isLoggedIn) router.replace("/login"); 
+  }, [isLoggedIn, router]);
+
   if (!isLoggedIn) return null;
+  
   const { items, removeFromCart, updateQuantity, clearCart, totalItems, totalPrice } = useCart();
 
   const shipping = totalPrice >= 49 ? 0 : 9.99;
@@ -32,14 +38,14 @@ export default function CartPage() {
               <ShoppingBag className="w-10 h-10 text-gray-400" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-3" style={{ fontFamily: "var(--font-playfair)" }}>
-              Cart Khali Hai
+              Your cart is empty
             </h1>
             <p className="text-gray-500 mb-8">
               Your cart is empty. Let's find some great products!
             </p>
             <Link href="/catalog"
               className="inline-flex items-center gap-2 bg-[#e8761a] hover:bg-[#d45c0e] text-white font-semibold px-8 py-3.5 rounded-xl transition">
-              <ArrowLeft className="w-4 h-4" /> Shopping Continue Karein
+              <ArrowLeft className="w-4 h-4" /> Continue Shopping
             </Link>
           </div>
         </main>
@@ -57,11 +63,11 @@ export default function CartPage() {
             <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: "var(--font-playfair)" }}>
               Shopping Cart
             </h1>
-            <p className="text-gray-500 text-sm mt-1">{totalItems} item{totalItems !== 1 ? "s" : ""} cart mein</p>
+            <p className="text-gray-500 text-sm mt-1">{totalItems} item{totalItems !== 1 ? "s" : ""} in cart</p>
           </div>
           <button onClick={clearCart}
             className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-700 transition">
-            <Trash2 className="w-4 h-4" /> Sab Hata Do
+            <Trash2 className="w-4 h-4" /> Clear All
           </button>
         </div>
 
@@ -120,7 +126,7 @@ export default function CartPage() {
 
             <Link href="/catalog"
               className="flex items-center gap-2 text-sm text-[#e8761a] hover:underline mt-2 w-fit">
-              <ArrowLeft className="w-4 h-4" /> Shopping Continue Karein
+              <ArrowLeft className="w-4 h-4" /> Continue Shopping
             </Link>
           </div>
 
@@ -173,7 +179,7 @@ export default function CartPage() {
                 className="w-full mt-6 bg-[#e8761a] hover:bg-[#d45c0e] text-white font-semibold py-4 rounded-xl
                            transition flex items-center justify-center gap-2 text-base">
                 <ShoppingBag className="w-5 h-5" />
-                Checkout Karein
+                Proceed to Checkout
               </button>
 
               <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
