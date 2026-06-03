@@ -19,10 +19,21 @@ export default function Footer() {
             Your premium home furnishings destination. Quality furniture, beautiful décor, delivered to your door.
           </p>
           <div className="flex gap-3">
-            {[Instagram, Twitter, Facebook, Youtube].map((Icon, i) => (
-              <div key={i} className="w-9 h-9 bg-gray-800 hover:bg-[#e8761a] rounded-xl flex items-center justify-center cursor-pointer transition">
-                <Icon className="w-4 h-4 text-gray-400 hover:text-white" />
-              </div>
+            {[
+              { Icon: Instagram, href: "https://instagram.com" },
+              { Icon: Twitter, href: "https://twitter.com" },
+              { Icon: Facebook, href: "https://facebook.com" },
+              { Icon: Youtube, href: "https://youtube.com" }
+            ].map((social, i) => (
+              <a 
+                key={i} 
+                href={social.href} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-9 h-9 bg-gray-800 hover:bg-[#e8761a] rounded-xl flex items-center justify-center transition group"
+              >
+                <social.Icon className="w-4 h-4 text-gray-400 group-hover:text-white transition" />
+              </a>
             ))}
           </div>
         </div>
@@ -53,6 +64,7 @@ export default function Footer() {
               { label: "My Orders", href: "/orders" },
               { label: "Shopping Cart", href: "/cart" },
               { label: "Dashboard", href: "/dashboard" },
+              { label: "Contact Us", href: "/contact" },
             ].map((link) => (
               <li key={link.label}>
                 <Link href={link.href} className="hover:text-[#e8761a] transition">{link.label}</Link>
@@ -94,9 +106,9 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
           <span>© {new Date().getFullYear()} WayPortal. All rights reserved.</span>
           <div className="flex gap-4">
-            <span className="hover:text-gray-300 cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-gray-300 cursor-pointer">Terms of Service</span>
-            <span className="hover:text-gray-300 cursor-pointer">Sitemap</span>
+            <Link href="/privacy" className="hover:text-gray-300">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-gray-300">Terms of Service</Link>
+            <Link href="/sitemap" className="hover:text-gray-300">Sitemap</Link>
           </div>
         </div>
       </div>
