@@ -100,7 +100,7 @@ Always try to guide users toward products available on WayPortal.`;
               </div>
               <div>
                 <p className="text-white font-semibold text-sm">AI Shopping Assistant</p>
-                {!minimized && <p className="text-white/70 text-xs">Powered by Claude AI</p>}
+                {/* {!minimized && <p className="text-white/70 text-xs">Powered by Claude AI</p>} */}
               </div>
             </div>
             <div className="flex items-center gap-1">

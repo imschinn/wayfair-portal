@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Package, ArrowRight, Lock, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Package, ArrowRight, Lock, Mail, ShieldCheck, Sparkles, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
@@ -83,13 +83,22 @@ export default function LoginPage() {
             <ShieldCheck className="w-4 h-4 text-[#e8761a] shrink-0" />
             <span className="text-gray-400 text-xs">Your data is secure and encrypted</span>
           </div>
+
+          {/* Back to Home — desktop left panel */}
+          {/* <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white transition group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            Back to Home
+          </Link> */}
         </div>
       </div>
 
       {/* Right Form Panel */}
       <div className="flex-1 flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
-          {/* Mobile logo */}
+          {/* Top bar: mobile logo + back button */}
           <div className="flex items-center justify-between mb-10">
             <Link href="/" className="lg:hidden flex items-center gap-2 group">
               <div className="w-9 h-9 bg-gradient-to-br from-[#e8761a] to-[#d45c0e] rounded-lg flex items-center justify-center shadow-md">
@@ -99,7 +108,15 @@ export default function LoginPage() {
                 <span className="text-[#e8761a]">Way</span><span className="text-gray-900">Portal</span>
               </span>
             </Link>
-            <div className="hidden lg:block" />
+
+            {/* Back to Home button — always visible on right side */}
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#e8761a] transition px-3 py-2 rounded-xl hover:bg-orange-50 border border-gray-200 hover:border-[#e8761a]/40 group"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to Home
+            </Link>
           </div>
 
           {/* Form card */}

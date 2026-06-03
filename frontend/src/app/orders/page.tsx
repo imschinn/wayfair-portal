@@ -14,8 +14,8 @@ const MOCK_ORDERS = [
     status: "Shipped",
     total: 1849.99,
     items: [
-      { name: "Hartwell Mid-Century Sectional Sofa", qty: 1, price: 1299.99, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=200&q=80" },
-      { name: "Cascade Pendant Light — Brass", qty: 2, price: 275.00, image: "https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=200&q=80" },
+      { name: "Hartwell Mid-Century Sectional Sofa", qty: 1, price: 1299.99, image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=90&auto=format&fit=crop" },
+      { name: "Cascade Pendant Light — Brass", qty: 2, price: 275.00, image: "https://images.unsplash.com/photo-1565814329452-e1efa11c5b89?w=400&q=90&auto=format&fit=crop" },
     ],
     tracking: "IND2026052789123",
     eta: "2026-05-31",
@@ -33,7 +33,7 @@ const MOCK_ORDERS = [
     status: "Delivered",
     total: 679.99,
     items: [
-      { name: "Elara Velvet King Bed Frame", qty: 1, price: 679.99, image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=200&q=80" },
+      { name: "Elara Velvet King Bed Frame", qty: 1, price: 679.99, image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=400&q=90&auto=format&fit=crop" },
     ],
     tracking: "IND2026052665432",
     eta: "2026-05-29",

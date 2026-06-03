@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ShoppingCart, Menu, X, Package, BarChart3,
-  MapPin, LogOut, ChevronDown, User
+  MapPin, LogOut, ChevronDown, LogIn, UserPlus, Home, BookOpen
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
@@ -24,11 +24,22 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!userMenuOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest("[data-user-menu]")) setUserMenuOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [userMenuOpen]);
+
   const handleLogout = () => {
     logout();
     setUserMenuOpen(false);
     setMobileOpen(false);
-    router.push("/login");
+    router.push("/");
   };
 
   return (
@@ -50,23 +61,33 @@ export default function Navbar() {
             </span>
           </Link>
 
+          {/* Centre nav links — visible to all */}
+          <nav className="hidden lg:flex items-center gap-1 flex-1 justify-center">
+            <Link href="/" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#e8761a] transition px-3 py-1.5 rounded-lg hover:bg-gray-100">
+              <Home className="w-4 h-4" />
+              <span>Home</span>
+            </Link>
+            <Link href="/catalog" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#e8761a] transition px-3 py-1.5 rounded-lg hover:bg-gray-100">
+              <BookOpen className="w-4 h-4" />
+              <span>Catalog</span>
+            </Link>
+            {isLoggedIn && (
+              <>
+                <Link href="/orders" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#e8761a] transition px-3 py-1.5 rounded-lg hover:bg-gray-100">
+                  <MapPin className="w-4 h-4" />
+                  <span>Orders</span>
+                </Link>
+                <Link href="/dashboard" className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#e8761a] transition px-3 py-1.5 rounded-lg hover:bg-gray-100">
+                  <BarChart3 className="w-4 h-4" />
+                  <span>Dashboard</span>
+                </Link>
+              </>
+            )}
+          </nav>
+
           {/* Right icons */}
           <div className="flex items-center gap-2">
-            {isLoggedIn && (
-              <Link href="/dashboard" className="hidden lg:flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#e8761a] transition px-2 py-1 rounded-lg hover:bg-gray-100">
-                <BarChart3 className="w-4 h-4" />
-                <span>Dashboard</span>
-              </Link>
-            )}
-
-            {isLoggedIn && (
-              <Link href="/orders" className="hidden lg:flex items-center gap-1.5 text-sm text-gray-600 hover:text-[#e8761a] transition px-2 py-1 rounded-lg hover:bg-gray-100">
-                <MapPin className="w-4 h-4" />
-                <span>Orders</span>
-              </Link>
-            )}
-
-            {/* Cart */}
+            {/* Cart — visible to all */}
             <Link href="/cart" className="relative p-2 text-gray-600 hover:text-[#e8761a] transition rounded-lg hover:bg-gray-100">
               <ShoppingCart className="w-5 h-5" />
               {totalItems > 0 && (
@@ -77,9 +98,9 @@ export default function Navbar() {
               )}
             </Link>
 
-            {/* Auth */}
+            {/* Auth section */}
             {isLoggedIn ? (
-              <div className="relative">
+              <div className="relative" data-user-menu>
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="hidden sm:flex items-center gap-1.5 text-sm text-gray-700 hover:text-[#e8761a] transition px-2 py-1 rounded-lg hover:bg-gray-100"
@@ -114,13 +135,16 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
+              /* Login + Register for unauthenticated users */
               <div className="hidden sm:flex items-center gap-2">
                 <Link href="/login"
-                  className="text-sm font-medium text-gray-600 hover:text-[#e8761a] transition px-3 py-1.5 rounded-lg hover:bg-gray-100">
+                  className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-[#e8761a] transition px-3 py-1.5 rounded-lg hover:bg-gray-100 border border-gray-200 hover:border-[#e8761a]/40">
+                  <LogIn className="w-4 h-4" />
                   Login
                 </Link>
                 <Link href="/register"
-                  className="text-sm font-semibold bg-gradient-to-r from-[#e8761a] to-[#d45c0e] hover:shadow-lg text-white px-4 py-1.5 rounded-full transition duration-200 shadow-md">
+                  className="flex items-center gap-1.5 text-sm font-semibold bg-gradient-to-r from-[#e8761a] to-[#d45c0e] hover:shadow-lg text-white px-4 py-1.5 rounded-full transition duration-200 shadow-md">
+                  <UserPlus className="w-4 h-4" />
                   Register
                 </Link>
               </div>
@@ -136,10 +160,21 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="sm:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-2">
+        <div className="sm:hidden border-t border-gray-100 bg-white px-4 py-4 space-y-1">
+          {/* Nav links visible to all */}
+          <Link href="/" onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 py-2.5 px-3 text-sm font-medium text-gray-700 hover:text-[#e8761a] hover:bg-gray-50 rounded-lg transition">
+            <Home className="w-4 h-4" /> Home
+          </Link>
+          <Link href="/catalog" onClick={() => setMobileOpen(false)}
+            className="flex items-center gap-2 py-2.5 px-3 text-sm font-medium text-gray-700 hover:text-[#e8761a] hover:bg-gray-50 rounded-lg transition">
+            <BookOpen className="w-4 h-4" /> Catalog
+          </Link>
+
           {isLoggedIn ? (
             <>
-              <div className="flex items-center gap-3 px-3 py-2 mb-3 bg-gray-50 rounded-xl">
+              {/* User info card */}
+              <div className="flex items-center gap-3 px-3 py-2 mt-2 mb-1 bg-gray-50 rounded-xl">
                 <div className="w-9 h-9 bg-gradient-to-br from-[#e8761a] to-[#d45c0e] rounded-full flex items-center justify-center text-white font-bold text-sm">
                   {user?.name.charAt(0).toUpperCase()}
                 </div>
@@ -164,14 +199,15 @@ export default function Navbar() {
               </div>
             </>
           ) : (
-            <div className="flex gap-2 pt-1">
+            /* Login / Register for unauthenticated mobile users */
+            <div className="flex gap-2 pt-2 border-t border-gray-100 mt-2">
               <Link href="/login" onClick={() => setMobileOpen(false)}
-                className="flex-1 text-sm text-center text-gray-700 font-medium px-3 py-2.5 border border-gray-300 rounded-xl hover:bg-gray-50 transition">
-                Login
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm text-gray-700 font-medium px-3 py-2.5 border border-gray-300 rounded-xl hover:bg-gray-50 transition">
+                <LogIn className="w-4 h-4" /> Login
               </Link>
               <Link href="/register" onClick={() => setMobileOpen(false)}
-                className="flex-1 text-sm text-center font-semibold bg-gradient-to-r from-[#e8761a] to-[#d45c0e] text-white px-4 py-2.5 rounded-xl transition">
-                Register
+                className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold bg-gradient-to-r from-[#e8761a] to-[#d45c0e] text-white px-4 py-2.5 rounded-xl transition">
+                <UserPlus className="w-4 h-4" /> Register
               </Link>
             </div>
           )}

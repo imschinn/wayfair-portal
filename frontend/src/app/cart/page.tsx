@@ -78,7 +78,7 @@ export default function CartPage() {
               <div key={item.product.id}
                 className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex gap-4 hover:border-[#e8761a]/30 transition">
                 <div className="relative w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-50">
-                  <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-cover" />
+                  <Image src={item.product.imageUrl} alt={item.product.name} fill className="object-cover" quality={90} sizes="96px" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Package, ArrowRight, Lock, Mail, User, CheckCircle2 } from "lucide-react";
+import {  ShieldCheck, Sparkles, ArrowLeft } from "lucide-react";
+
 import { useAuth } from "@/context/AuthContext";
 
 export default function RegisterPage() {
@@ -117,6 +119,15 @@ export default function RegisterPage() {
                 <span className="text-[#e8761a]">Way</span><span className="text-gray-900">Portal</span>
               </span>
             </Link>
+
+            <Link
+              href="/"
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-[#e8761a] transition px-3 py-2 rounded-xl hover:bg-orange-50 border border-gray-200 hover:border-[#e8761a]/40 group"
+            >
+              <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
+              Back to Home
+            </Link>
+            
             <div className="hidden lg:block" />
           </div>
 
@@ -133,9 +144,11 @@ export default function RegisterPage() {
                   <p className="text-gray-500 text-sm">Redirecting you to the login page…</p>
                 </div>
               </div>
+              
             ) : (
               <>
                 <div className="mb-8">
+                  
                   <h1 className="text-3xl font-bold text-gray-900 mb-2" style={{ fontFamily: "var(--font-playfair)" }}>
                     Create Account
                   </h1>

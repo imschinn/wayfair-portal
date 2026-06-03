@@ -27,16 +27,31 @@ export default function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setAdded(false), 1800);
   };
 
+  // Upgrade Unsplash image resolution and quality
+  const getHighResImage = (url: string) => {
+    if (url.includes("unsplash.com")) {
+      // Replace existing w= and q= params with higher values
+      return url
+        .replace(/w=\d+/, "w=800")
+        .replace(/q=\d+/, "q=90")
+        + (url.includes("auto=") ? "" : "&auto=format&fit=crop");
+    }
+    return url;
+  };
+
+  const imageUrl = getHighResImage(product.imageUrl);
+
   return (
-    <div className="product-card group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#e8761a]/30">
+    <div className="product-card group bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-[#e8761a]/30 hover:shadow-xl transition-all duration-300">
       {/* Image */}
       <Link href={`/catalog/${product.id}`} className="block relative aspect-[4/3] bg-gray-50 overflow-hidden">
         <Image
-          src={product.imageUrl}
+          src={imageUrl}
           alt={product.name}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          quality={90}
         />
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
