@@ -1,10 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Enable React strict mode for surfacing potential issues
   reactStrictMode: true,
 
-  // Image optimization - allow external sources (product images)
+  // Fix: Tell Turbopack that THIS folder is the project root
+  // (prevents confusion from the parent package-lock.json)
+  experimental: {
+    turbo: {
+      root: __dirname,
+    },
+  },
+
   images: {
     remotePatterns: [
       {
@@ -17,9 +23,11 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
 
-  // API proxy for local dev - rewrites backend calls through Next.js
   async rewrites() {
     return [
       {
@@ -29,7 +37,6 @@ const nextConfig: NextConfig = {
     ];
   },
 
-  // Security headers
   async headers() {
     return [
       {

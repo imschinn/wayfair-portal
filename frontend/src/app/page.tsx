@@ -7,8 +7,6 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/catalog/ProductCard";
 import { ALL_MOCK_PRODUCTS } from "@/lib/api";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
 import {
   ChevronLeft, ChevronRight, ArrowRight, Star,
   Truck, RotateCcw, Shield, Headphones
@@ -20,7 +18,7 @@ const SLIDES = [
     subtitle: "Up to 40% off on premium sofas & sectionals",
     cta: "Shop Living Room",
     href: "/catalog?category=Living+Room",
-    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1600&q=90&auto=format&fit=crop",
     dark: true,
   },
   {
@@ -28,7 +26,7 @@ const SLIDES = [
     subtitle: "Luxury beds, dressers & nightstands at great prices",
     cta: "Shop Bedroom",
     href: "/catalog?category=Bedroom",
-    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=1600&q=90&auto=format&fit=crop",
     dark: true,
   },
   {
@@ -36,7 +34,7 @@ const SLIDES = [
     subtitle: "Solid wood tables & chairs for every home",
     cta: "Shop Dining",
     href: "/catalog?category=Dining+Room",
-    image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=1600&q=90&auto=format&fit=crop",
     dark: true,
   },
 ];
@@ -59,23 +57,13 @@ const PERKS = [
 
 export default function HomePage() {
   const [slide, setSlide] = useState(0);
-  const { isLoggedIn } = useAuth();
-  const router = useRouter();
   const featuredProducts = ALL_MOCK_PRODUCTS.filter((p) => p.isFeatured).slice(0, 6);
   const newArrivals = ALL_MOCK_PRODUCTS.slice(-6);
-
-  useEffect(() => {
-    if (!isLoggedIn) {
-      router.replace("/login");
-    }
-  }, [isLoggedIn, router]);
 
   useEffect(() => {
     const t = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 5000);
     return () => clearInterval(t);
   }, []);
-
-  if (!isLoggedIn) return null;
 
   return (
     <>
@@ -86,7 +74,15 @@ export default function HomePage() {
           {SLIDES.map((s, i) => (
             <div key={i}
               className={"absolute inset-0 transition-opacity duration-700 " + (i === slide ? "opacity-100 z-10" : "opacity-0 z-0")}>
-              <Image src={s.image} alt={s.title} fill className="object-cover" priority={i === 0} />
+              <Image
+                src={s.image}
+                alt={s.title}
+                fill
+                className="object-cover"
+                priority={i === 0}
+                quality={90}
+                sizes="100vw"
+              />
               <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
               <div className="relative z-10 h-full flex items-center max-w-7xl mx-auto px-6 sm:px-10">
                 <div className="max-w-xl">
