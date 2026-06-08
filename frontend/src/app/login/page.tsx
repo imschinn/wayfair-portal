@@ -128,7 +128,7 @@ export default function LoginPage() {
               <p className="text-gray-500 text-sm">
                 Don&apos;t have an account?{" "}
                 <Link href="/register" className="text-[#e8761a] font-semibold hover:underline">
-                  Create one free
+                  Create Account
                 </Link>
               </p>
             </div>
@@ -163,7 +163,7 @@ export default function LoginPage() {
                 <div className="flex items-center justify-between">
                   <label className="block text-sm font-semibold text-gray-800">Password</label>
                   <button type="button" className="text-xs text-[#e8761a] hover:underline font-medium"
-                    onClick={() => setError("Password reset is not available in demo mode.")}>
+                    onClick={() => setError("New Device - Please Create Account First")}>
                     Forgot password?
                   </button>
                 </div>

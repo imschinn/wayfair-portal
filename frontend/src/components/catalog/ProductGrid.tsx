@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation"; // Hook to listen to URL shifts
 import { SlidersHorizontal, Grid3X3, LayoutList, Search, Package } from "lucide-react";
 import ProductCard from "./ProductCard";
 import AIRecommendations from "./AIRecommendations";
@@ -15,37 +16,54 @@ const SORT_OPTIONS = [
   { value: "rating", label: "Top Rated" },
 ];
 
-interface ProductGridProps {
-  initialCategory?: string;
-}
+export default function ProductGrid() {
+  const searchParams = useSearchParams();
+  
+  // Extract real-time values directly from the browser URL address bar
+  const urlCategory = searchParams.get("category");
+  const urlSearchQuery = searchParams.get("search") || "";
 
-export default function ProductGrid({ initialCategory }: ProductGridProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [gridView, setGridView] = useState<"grid" | "list">("grid");
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Sync state search field text with the active URL search parameter
+  const [searchQuery, setSearchQuery] = useState(urlSearchQuery);
+
   const [filters, setFilters] = useState<ProductFilters>({
-    category: initialCategory && initialCategory !== "All" ? initialCategory : undefined,
+    category: urlCategory && urlCategory !== "All" ? urlCategory : undefined,
     sort: "newest",
     inStock: undefined,
   });
-  const [searchQuery, setSearchQuery] = useState("");
-  const [totalCount, setTotalCount] = useState(0);
 
+  // Effect 1: Watch the browser URL updates to auto-sync the local React state configurations
+  useEffect(() => {
+    setFilters((prev) => ({
+      ...prev,
+      category: urlCategory && urlCategory !== "All" ? urlCategory : undefined,
+    }));
+    setSearchQuery(urlSearchQuery);
+  }, [urlCategory, urlSearchQuery]);
+
+  // Effect 2: Run data query loads whenever filters or URL parameters change
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const res = await getProducts({ ...filters, search: searchQuery || undefined });
+        const res = await getProducts({ ...filters, search: urlSearchQuery || undefined });
         setProducts(res.content);
         setTotalCount(res.totalElements);
       } catch {
-        // Backend unavailable — use mock data with client-side filtering
+        // Backend fallback option utilizing local mock arrays
         let data = [...ALL_MOCK_PRODUCTS];
         if (filters.category) data = data.filter((p) => p.category === filters.category);
         if (filters.inStock) data = data.filter((p) => p.inStock);
-        if (searchQuery) data = data.filter((p) =>
-          p.name.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+        if (urlSearchQuery) {
+          data = data.filter((p) =>
+            p.name.toLowerCase().includes(urlSearchQuery.toLowerCase())
+          );
+        }
         if (filters.sort === "price_asc") data.sort((a, b) => a.price - b.price);
         if (filters.sort === "price_desc") data.sort((a, b) => b.price - a.price);
         if (filters.sort === "rating") data.sort((a, b) => b.rating - a.rating);
@@ -56,10 +74,22 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
       }
     };
     load();
-  }, [filters, searchQuery]);
+  }, [filters, urlSearchQuery]);
 
   const handleCategoryChange = (cat: string) => {
     setFilters((f) => ({ ...f, category: cat === "All" ? undefined : cat }));
+  };
+
+  // Submit local text queries into URL parameters
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(window.location.search);
+    if (searchQuery.trim()) {
+      params.set("search", searchQuery.trim());
+    } else {
+      params.delete("search");
+    }
+    window.history.pushState({}, "", `${window.location.pathname}?${params.toString()}`);
   };
 
   return (
@@ -81,27 +111,32 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
             enterprise-grade logistics.
           </p>
         </div>
-        {/* Decorative element */}
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-[#e8761a]/10 blur-3xl" />
       </div>
 
       {/* Toolbar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-        {/* Search */}
-        <div className="relative flex-1 max-w-sm">
+        {/* Search Input Box with Form Submission Wrapper */}
+        <form onSubmit={handleSearchSubmit} className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Search products…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm
+            className="w-full pl-9 pr-16 py-2.5 border border-gray-200 rounded-xl text-sm
                        focus:outline-none focus:ring-2 focus:ring-[#e8761a]/40 focus:border-[#e8761a]"
           />
-        </div>
+          <button 
+            type="submit" 
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-xs bg-[#e8761a] text-white px-2.5 py-1.5 rounded-lg hover:bg-[#d45c0e] transition"
+          >
+            Go
+          </button>
+        </form>
 
         <div className="flex items-center gap-3">
-          {/* Sort */}
+          {/* Sort selection dropdown */}
           <select
             value={filters.sort}
             onChange={(e) =>
@@ -117,7 +152,7 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
             ))}
           </select>
 
-          {/* In-stock filter */}
+          {/* In-stock tracking toggle checkbox */}
           <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
             <input
               type="checkbox"
@@ -130,7 +165,7 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
             In Stock
           </label>
 
-          {/* View toggle */}
+          {/* Grid Layout Toggles */}
           <div className="flex border border-gray-200 rounded-xl overflow-hidden">
             <button
               onClick={() => setGridView("grid")}
@@ -148,7 +183,7 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
         </div>
       </div>
 
-      {/* Category pills */}
+      {/* Category tabs container */}
       <div className="flex gap-2 flex-wrap mb-6">
         {CATEGORIES.map((cat) => {
           const isActive = cat === "All" ? !filters.category : filters.category === cat;
@@ -172,7 +207,7 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
         </span>
       </div>
 
-      {/* Product Grid */}
+      {/* Main product results container */}
       {loading ? (
         <div className={`grid gap-6 ${gridView === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
           {Array.from({ length: 6 }).map((_, i) => (
@@ -195,23 +230,17 @@ export default function ProductGrid({ initialCategory }: ProductGridProps) {
         </div>
       ) : (
         <>
-          <div
-            className={`grid gap-6 ${
-              gridView === "grid"
-                ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-                : "grid-cols-1"
-            }`}
-          >
+          <div className={`grid gap-6 ${gridView === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3" : "grid-cols-1"}`}>
             {products.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
-          {/* AI Recommendations Section */}
+          {/* AI Recommendation Blocks */}
           {products.length > 0 && (
             <AIRecommendations 
               allProducts={products} 
-              currentSearchQuery={searchQuery}
+              currentSearchQuery={urlSearchQuery}
               limit={4}
             />
           )}
